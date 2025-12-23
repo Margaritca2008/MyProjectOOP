@@ -1,0 +1,16 @@
+@startuml
+interface IWorldFactory {
+    CreateStrategies() : ICellStrategyProvider
+    CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+class ClassicWorldFactory {
+    + CreateStrategies() : ICellStrategyProvider
+    + CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+class ColoniesWorldFactory {
+    + CreateStrategies() : ICellStrategyProvider
+    + CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+IWorldFactory <|-- ClassicWorldFactory
+IWorldFactory <|-- ColoniesWorldFactory
+@enduml

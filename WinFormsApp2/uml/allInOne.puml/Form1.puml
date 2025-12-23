@@ -1,0 +1,26 @@
+@startuml
+class Form1 <<partial>> {
+    - pictureBox : PictureBox
+    - drawGridCheckBox : CheckBox
+    - showPatternsCheckBox : CheckBox
+    - comboBox : ComboBox
+    - applyModeButton : Button
+    - staticLabel : Label
+    - startButton : Button
+    - stopButton : Button
+    - terrain : ITerrain
+    - baseTerrain : Terrain
+    - cellSize : int = 16
+    - running : bool = false
+    - statsDecorator : StatisticsTerrainDecorator
+    - scannerDecorator : ScannerTerrainDecorator
+    - framedDecorator : FramedCellsTerrainDecorator
+    - scanner : Scanner
+    - currentFactory : IWorldFactory
+    - fieldSize : int = 40
+    + Form1()
+    - ApplyMode() : void
+    - <<async>> StartButton_Click(sender:object, e:EventArgs) : void
+}
+Form <|-- Form1
+@enduml

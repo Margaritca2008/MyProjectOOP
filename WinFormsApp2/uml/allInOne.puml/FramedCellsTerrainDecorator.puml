@@ -1,0 +1,8 @@
+@startuml
+class FramedCellsTerrainDecorator {
+    + Grid : bool <<get>> <<set>> = true
+    + FramedCellsTerrainDecorator(inner:ITerrain)
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- FramedCellsTerrainDecorator
+@enduml

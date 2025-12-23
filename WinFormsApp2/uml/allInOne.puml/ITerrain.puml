@@ -1,0 +1,8 @@
+@startuml
+interface ITerrain {
+    Cells : Cell[,] <<get>>
+    N : int <<get>>
+    Update() : void
+    Draw(g:Graphics, cellSize:int) : void
+}
+@enduml

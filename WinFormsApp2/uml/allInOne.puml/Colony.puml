@@ -1,0 +1,16 @@
+@startuml
+enum Direction {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+class Colony {
+    + id : int
+    + members : List<(int i, int j)>
+    + dir : Direction
+    + Blocked : bool
+    + Colony(_id:int)
+    + PickNewDirection(prev:Direction) : void
+}
+@enduml

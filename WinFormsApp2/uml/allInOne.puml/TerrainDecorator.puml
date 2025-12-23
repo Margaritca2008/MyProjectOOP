@@ -1,0 +1,11 @@
+@startuml
+abstract class TerrainDecorator {
+    # <<readonly>> inner : ITerrain
+    # TerrainDecorator(inner:ITerrain)
+    + <<virtual>> Cells : Cell[,] <<get>>
+    + <<virtual>> N : int <<get>>
+    + <<virtual>> Update() : void
+    + <<virtual>> Draw(g:Graphics, cellSize:int) : void
+}
+ITerrain <|-- TerrainDecorator
+@enduml

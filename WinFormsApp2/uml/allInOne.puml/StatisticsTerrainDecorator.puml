@@ -1,0 +1,11 @@
+@startuml
+class StatisticsTerrainDecorator {
+    - PreviousCount : int = 0
+    + Count : int <<get>>
+    + Delta : double <<get>>
+    + TimeMs : long <<get>>
+    + StatisticsTerrainDecorator(t:Terrain)
+    + <<override>> Update() : void
+}
+TerrainDecorator <|-- StatisticsTerrainDecorator
+@enduml

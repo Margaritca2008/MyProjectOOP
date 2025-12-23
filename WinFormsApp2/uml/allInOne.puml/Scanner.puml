@@ -1,0 +1,18 @@
+@startuml
+class Scanner {
+    +  <<event>> PatternDetected : Action<List<(int i, int j, int pattern)>> 
+    + allPatterns : List<List<(int x, int y)>>
+    - <<readonly>> isAlive : Func<CellType, bool>
+    - <<readonly>> isNeighbor : Func<CellType, bool>
+    - <<readonly>> terrain : ITerrain
+    + Patterns : List<List<(int x, int y)>> <<get>>
+    + Scanner(terrain:ITerrain, isAlivePredicate:Func<CellType, bool>, isNeighborPredicate:Func<CellType, bool>)
+    + RaisePatternDetected(patterns:List<(int i, int j, int pattern)>) : void
+    + ScanField() : List<(int i, int j, int pattern)>
+    - Matches(Cells:Cell[,], pattern:List<(int x, int y)>, i:int, j:int) : bool
+    - CheckingNeighbors(Cells:Cell[,], pattern:List<(int x, int y)>, i:int, j:int) : bool
+    - Rotate90(pattern:List<(int x, int y)>) : List<(int x, int y)>
+    - Rotate180(pattern:List<(int x, int y)>) : List<(int x, int y)>
+    - Rotate270(pattern:List<(int x, int y)>) : List<(int x, int y)>
+}
+@enduml

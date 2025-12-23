@@ -1,0 +1,11 @@
+@startuml
+interface ICellFactory {
+    Create(x:int, y:int, type:CellType) : Cell
+}
+class SimpleCellFactory {
+    - <<readonly>> strategies : ICellStrategyProvider
+    + SimpleCellFactory(strategies:ICellStrategyProvider)
+    + Create(x:int, y:int, type:CellType) : Cell
+}
+ICellFactory <|-- SimpleCellFactory
+@enduml

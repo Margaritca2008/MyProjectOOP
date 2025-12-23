@@ -1,0 +1,11 @@
+@startuml
+class ScannerTerrainDecorator {
+    - <<readonly>> scanner : Scanner
+    + HighlightedCells : HashSet<Cell> <<get>>
+    + ShowPatterns : bool <<get>> <<set>> = true
+    + ScannerTerrainDecorator(inner:ITerrain, scanner:Scanner)
+    + <<override>> Update() : void
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- ScannerTerrainDecorator
+@enduml

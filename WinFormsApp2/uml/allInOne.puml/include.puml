@@ -1,0 +1,189 @@
+@startuml
+class CellContext <<record>> {
+    + Self : CellType <<get>> <<init>>
+    + WhiteN : int <<get>> <<init>>
+    + BlackN : int <<get>> <<init>>
+    + AliveN : int <<get>> <<init>>
+}
+enum CellType {
+    Empty,
+    White,
+    Black,
+}
+class Cell {
+    + X : int <<get>>
+    + Y : int <<get>>
+    + Type : CellType <<get>>
+    + Neighbors : List<Cell> <<get>> <<set>>
+    - _nextType : CellType
+    - <<readonly>> provider : ICellStrategyProvider
+    + Cell(x:int, y:int, type:CellType, provider:ICellStrategyProvider)
+    + PlanNext(ctx:CellContext) : void
+    + ApplyNextState() : void
+    + Draw(g:Graphics, cellSize:int) : void
+}
+enum Direction {
+    Left,
+    Right,
+    Up,
+    Down,
+}
+class Colony {
+    + id : int
+    + members : List<(int i, int j)>
+    + dir : Direction
+    + Blocked : bool
+    + Colony(_id:int)
+    + PickNewDirection(prev:Direction) : void
+}
+class Form1 <<partial>> {
+    - pictureBox : PictureBox
+    - drawGridCheckBox : CheckBox
+    - showPatternsCheckBox : CheckBox
+    - comboBox : ComboBox
+    - applyModeButton : Button
+    - staticLabel : Label
+    - startButton : Button
+    - stopButton : Button
+    - terrain : ITerrain
+    - baseTerrain : Terrain
+    - cellSize : int = 16
+    - running : bool = false
+    - statsDecorator : StatisticsTerrainDecorator
+    - scannerDecorator : ScannerTerrainDecorator
+    - framedDecorator : FramedCellsTerrainDecorator
+    - scanner : Scanner
+    - currentFactory : IWorldFactory
+    - fieldSize : int = 40
+    + Form1()
+    - ApplyMode() : void
+    - <<async>> StartButton_Click(sender:object, e:EventArgs) : void
+}
+Form <|-- Form1
+class Form1 <<partial>> {
+    - components : System.ComponentModel.IContainer = null
+    # <<override>> Dispose(disposing:bool) : void
+    - InitializeComponent() : void
+}
+class FramedCellsTerrainDecorator {
+    + Grid : bool <<get>> <<set>> = true
+    + FramedCellsTerrainDecorator(inner:ITerrain)
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- FramedCellsTerrainDecorator
+interface ICellLifeStrategy {
+    GetNext(ctx:CellContext) : CellType
+}
+class ClassicEmptyStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ClassicWhiteStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ColonyWhiteStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ColonyBlackStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+ICellLifeStrategy <|-- ClassicEmptyStrategy
+ICellLifeStrategy <|-- ClassicWhiteStrategy
+ICellLifeStrategy <|-- ColonyWhiteStrategy
+ICellLifeStrategy <|-- ColonyBlackStrategy
+interface ICellStrategyProvider {
+    For(type:CellType) : ICellLifeStrategy
+}
+class CellStrategyProvider {
+    - <<readonly>> strategies : Dictionary<CellType, ICellLifeStrategy>
+    + CellStrategyProvider(strategies:Dictionary<CellType, ICellLifeStrategy>)
+    + For(type:CellType) : ICellLifeStrategy
+}
+ICellStrategyProvider <|-- CellStrategyProvider
+interface ITerrain {
+    Cells : Cell[,] <<get>>
+    N : int <<get>>
+    Update() : void
+    Draw(g:Graphics, cellSize:int) : void
+}
+interface IWorldFactory {
+    CreateStrategies() : ICellStrategyProvider
+    CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+class ClassicWorldFactory {
+    + CreateStrategies() : ICellStrategyProvider
+    + CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+class ColoniesWorldFactory {
+    + CreateStrategies() : ICellStrategyProvider
+    + CreateCellFactory(strategies:ICellStrategyProvider) : ICellFactory
+}
+IWorldFactory <|-- ClassicWorldFactory
+IWorldFactory <|-- ColoniesWorldFactory
+class Program <<static>> {
+    {static} - Main() : void
+}
+class Scanner {
+    +  <<event>> PatternDetected : Action<List<(int i, int j, int pattern)>> 
+    + allPatterns : List<List<(int x, int y)>>
+    - <<readonly>> isAlive : Func<CellType, bool>
+    - <<readonly>> isNeighbor : Func<CellType, bool>
+    - <<readonly>> terrain : ITerrain
+    + Patterns : List<List<(int x, int y)>> <<get>>
+    + Scanner(terrain:ITerrain, isAlivePredicate:Func<CellType, bool>, isNeighborPredicate:Func<CellType, bool>)
+    + RaisePatternDetected(patterns:List<(int i, int j, int pattern)>) : void
+    + ScanField() : List<(int i, int j, int pattern)>
+    - Matches(Cells:Cell[,], pattern:List<(int x, int y)>, i:int, j:int) : bool
+    - CheckingNeighbors(Cells:Cell[,], pattern:List<(int x, int y)>, i:int, j:int) : bool
+    - Rotate90(pattern:List<(int x, int y)>) : List<(int x, int y)>
+    - Rotate180(pattern:List<(int x, int y)>) : List<(int x, int y)>
+    - Rotate270(pattern:List<(int x, int y)>) : List<(int x, int y)>
+}
+class ScannerTerrainDecorator {
+    - <<readonly>> scanner : Scanner
+    + HighlightedCells : HashSet<Cell> <<get>>
+    + ShowPatterns : bool <<get>> <<set>> = true
+    + ScannerTerrainDecorator(inner:ITerrain, scanner:Scanner)
+    + <<override>> Update() : void
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- ScannerTerrainDecorator
+interface ICellFactory {
+    Create(x:int, y:int, type:CellType) : Cell
+}
+class SimpleCellFactory {
+    - <<readonly>> strategies : ICellStrategyProvider
+    + SimpleCellFactory(strategies:ICellStrategyProvider)
+    + Create(x:int, y:int, type:CellType) : Cell
+}
+ICellFactory <|-- SimpleCellFactory
+class StatisticsTerrainDecorator {
+    - PreviousCount : int = 0
+    + Count : int <<get>>
+    + Delta : double <<get>>
+    + TimeMs : long <<get>>
+    + StatisticsTerrainDecorator(t:Terrain)
+    + <<override>> Update() : void
+}
+TerrainDecorator <|-- StatisticsTerrainDecorator
+class Terrain {
+    - cells : Cell[,]
+    + Terrain(N:int, cellFactory:ICellFactory)
+    + Reinitialize(N:int, cellFactory:ICellFactory) : void
+    - GetNeighbors(x:int, y:int) : List<Cell>
+    + Cells : Cell[,] <<get>>
+    + N : int <<get>>
+    + BuildContext(cell:Cell) : CellContext
+    + Update() : void
+    + Draw(g:Graphics, cellSize:int) : void
+}
+ITerrain <|-- Terrain
+abstract class TerrainDecorator {
+    # <<readonly>> inner : ITerrain
+    # TerrainDecorator(inner:ITerrain)
+    + <<virtual>> Cells : Cell[,] <<get>>
+    + <<virtual>> N : int <<get>>
+    + <<virtual>> Update() : void
+    + <<virtual>> Draw(g:Graphics, cellSize:int) : void
+}
+ITerrain <|-- TerrainDecorator
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+interface ICellStrategyProvider {
+    For(type:CellType) : ICellLifeStrategy
+}
+class CellStrategyProvider {
+    - <<readonly>> strategies : Dictionary<CellType, ICellLifeStrategy>
+    + CellStrategyProvider(strategies:Dictionary<CellType, ICellLifeStrategy>)
+    + For(type:CellType) : ICellLifeStrategy
+}
+ICellStrategyProvider <|-- CellStrategyProvider
+@enduml

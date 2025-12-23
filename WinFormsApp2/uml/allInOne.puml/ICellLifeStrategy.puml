@@ -1,0 +1,21 @@
+@startuml
+interface ICellLifeStrategy {
+    GetNext(ctx:CellContext) : CellType
+}
+class ClassicEmptyStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ClassicWhiteStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ColonyWhiteStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+class ColonyBlackStrategy {
+    + GetNext(ctx:CellContext) : CellType
+}
+ICellLifeStrategy <|-- ClassicEmptyStrategy
+ICellLifeStrategy <|-- ClassicWhiteStrategy
+ICellLifeStrategy <|-- ColonyWhiteStrategy
+ICellLifeStrategy <|-- ColonyBlackStrategy
+@enduml

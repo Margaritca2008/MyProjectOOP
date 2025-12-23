@@ -1,0 +1,14 @@
+@startuml
+class Terrain {
+    - cells : Cell[,]
+    + Terrain(N:int, cellFactory:ICellFactory)
+    + Reinitialize(N:int, cellFactory:ICellFactory) : void
+    - GetNeighbors(x:int, y:int) : List<Cell>
+    + Cells : Cell[,] <<get>>
+    + N : int <<get>>
+    + BuildContext(cell:Cell) : CellContext
+    + Update() : void
+    + Draw(g:Graphics, cellSize:int) : void
+}
+ITerrain <|-- Terrain
+@enduml

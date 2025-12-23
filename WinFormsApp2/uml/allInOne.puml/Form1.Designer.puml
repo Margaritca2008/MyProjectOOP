@@ -1,0 +1,7 @@
+@startuml
+class Form1 <<partial>> {
+    - components : System.ComponentModel.IContainer = null
+    # <<override>> Dispose(disposing:bool) : void
+    - InitializeComponent() : void
+}
+@enduml

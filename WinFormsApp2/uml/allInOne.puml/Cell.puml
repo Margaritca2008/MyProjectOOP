@@ -1,0 +1,25 @@
+@startuml
+class CellContext <<record>> {
+    + Self : CellType <<get>> <<init>>
+    + WhiteN : int <<get>> <<init>>
+    + BlackN : int <<get>> <<init>>
+    + AliveN : int <<get>> <<init>>
+}
+enum CellType {
+    Empty,
+    White,
+    Black,
+}
+class Cell {
+    + X : int <<get>>
+    + Y : int <<get>>
+    + Type : CellType <<get>>
+    + Neighbors : List<Cell> <<get>> <<set>>
+    - _nextType : CellType
+    - <<readonly>> provider : ICellStrategyProvider
+    + Cell(x:int, y:int, type:CellType, provider:ICellStrategyProvider)
+    + PlanNext(ctx:CellContext) : void
+    + ApplyNextState() : void
+    + Draw(g:Graphics, cellSize:int) : void
+}
+@enduml
