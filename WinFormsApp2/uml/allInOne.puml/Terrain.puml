@@ -1,9 +1,11 @@
 @startuml
 class Terrain {
     - cells : Cell[,]
+    + {static} nextId : int = 0
     + Terrain(N:int, cellFactory:ICellFactory)
     + Reinitialize(N:int, cellFactory:ICellFactory) : void
-    - GetNeighbors(x:int, y:int) : List<Cell>
+    + GetNeighbors(x:int, y:int) : List<Cell>
+    + GetNeighbors(cell:Cell) : IEnumerable<Cell>
     + Cells : Cell[,] <<get>>
     + N : int <<get>>
     + BuildContext(cell:Cell) : CellContext

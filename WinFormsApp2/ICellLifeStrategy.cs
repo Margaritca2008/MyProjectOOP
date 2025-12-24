@@ -14,7 +14,7 @@ namespace WinFormsApp1
     {
         public CellType GetNext(CellContext ctx)
         {
-            return ctx.AliveN == 3 ? CellType.White : CellType.Empty;
+            return ctx.WhiteN == 3 ? CellType.White : CellType.Empty;
         }
     }
     public class ClassicWhiteStrategy : ICellLifeStrategy
@@ -33,7 +33,7 @@ namespace WinFormsApp1
                 ctx.myCell.AssignToColony(ctx.FirstBlackNeighbor.Colony);
                 return CellType.Black;
             }
-            return (ctx.AliveN == 2 || ctx.AliveN == 3) ? CellType.White : CellType.Empty;
+            return (ctx.WhiteN == 2 || ctx.WhiteN == 3) ? CellType.White : CellType.Empty;
         }
     }
 
@@ -45,7 +45,7 @@ namespace WinFormsApp1
             {
                 return CellType.White;
             }
-            return (ctx.AliveN == 2 || ctx.AliveN == 3) ? CellType.Black : CellType.Empty;
+            return (ctx.BlackN == 2 || ctx.BlackN == 3) ? CellType.Black : CellType.Empty;
         }
     }
 

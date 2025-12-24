@@ -1,16 +1,23 @@
 @startuml
-enum Direction {
-    Left,
-    Right,
-    Up,
-    Down,
-}
 class Colony {
-    + id : int
-    + members : List<(int i, int j)>
-    + dir : Direction
-    + Blocked : bool
-    + Colony(_id:int)
-    + PickNewDirection(prev:Direction) : void
+    + members : HashSet<Point> <<get>>
+    + Direction : Point <<get>> <<set>>
+    - {static} _nextId : int = 1
+    + Id : int <<get>>
+    + SkipNextTurn : bool <<get>> <<set>> = false
+    - rnd : Random
+    + Colony(cells:IEnumerable<Point>)
+    + SetNewRandomDirection() : void
+    - RandomDirection(old:Point) : Point
+}
+class Colonys {
+    - <<readonly>> terrain : Terrain
+    - <<readonly>> colonys : List<Colony>
+    - <<readonly>> rnd : Random
+    + Colonys(terrain:Terrain)
+    + CreateColoniesFromScanner(scanner:Scanner, replace:bool) : void
+    - MergeColonies(a:Colony, b:Colony) : void
+    + MoveColonies() : void
+    - TryMove(colony:Colony) : void
 }
 @enduml

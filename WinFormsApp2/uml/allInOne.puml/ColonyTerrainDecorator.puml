@@ -1,0 +1,10 @@
+@startuml
+class ColonyTerrainDecorator {
+    - colonys : Colonys
+    - scanner : Scanner
+    + ColonyTerrainDecorator(inner:ITerrain, sranner:Scanner, colonys:Colonys)
+    + <<override>> Update() : void
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- ColonyTerrainDecorator
+@enduml

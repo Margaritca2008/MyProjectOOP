@@ -114,21 +114,17 @@ namespace WinFormsApp1
             running = true;
             startButton.Enabled = false;
             stopButton.Enabled = true;
-            int count = 0;
             while (running)
             {
                 terrain.Update();
-                if (count % 100 == 0)
-                {
-                    colonys?.CreateColoniesFromScanner(scanner);
-                }
-               
+                colonys?.CreateColoniesFromScanner(scanner);
+                colonys?.MoveColonies();
                 pictureBox.Invalidate();
                 staticLabel.Text =
                     $"Alive: {statsDecorator.Count}\n" +
                     $"Turn time: {statsDecorator.TimeMs} ms";
 
-                await Task.Delay(100);
+                await Task.Delay(300);
             }
             startButton.Enabled = true;
             stopButton.Enabled = false;

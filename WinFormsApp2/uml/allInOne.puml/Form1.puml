@@ -15,7 +15,9 @@ class Form1 <<partial>> {
     - statsDecorator : StatisticsTerrainDecorator
     - scannerDecorator : ScannerTerrainDecorator
     - framedDecorator : FramedCellsTerrainDecorator
+    - colonyDecorator : ColonyTerrainDecorator
     - scanner : Scanner
+    - colonys : Colonys
     - currentFactory : IWorldFactory
     - fieldSize : int = 40
     + Form1()

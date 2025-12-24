@@ -52,9 +52,8 @@ namespace WinFormsApp1
             this.terrain = terrain ?? throw new ArgumentNullException(nameof(terrain));
         }
 
-        public void CreateColoniesFromScanner(Scanner scanner, bool replace = false)
+        public void CreateColoniesFromScanner(Scanner scanner)
         {
-            if (replace) colonys.Clear();
             for (int i =0; i < terrain.N; i++)
             {
                 for (int j = 0; j< terrain.N; j++)
@@ -82,7 +81,6 @@ namespace WinFormsApp1
                 var coords = scanner.Patterns[p]
                     .Select(off => new Point(i + off.x, j + off.y))
                     .ToList();
-
                 if (coords.Count == 0) continue;
                 if (coords.All(pt => terrain.Cells[pt.X, pt.Y].Colony != null))
                     continue;
@@ -99,11 +97,14 @@ namespace WinFormsApp1
         private void MergeColonies(Colony a, Colony b)
         {
             if (a == b || b == null) return;
-            foreach (var t in b.members)
+            var bMembers = b.members.ToList();
+
+            foreach (var t in bMembers)
             {
                 a.members.Add(t);
                 terrain.Cells[t.X, t.Y].AssignToColony(a);
             }
+            b.members.Clear();
             colonys.Remove(b);
             a.SetNewRandomDirection();
         }
@@ -112,7 +113,10 @@ namespace WinFormsApp1
             var colonysCopy = colonys.ToList();
             foreach (var colony in colonysCopy)
             {
-                if (colonys.Contains(colony)) TryMove(colony);
+                if (colonys.Contains(colony))
+                {
+                    TryMove(colony);
+                }
             }
         }
 
@@ -132,6 +136,7 @@ namespace WinFormsApp1
                 if (nx < 0 || ny < 0 || nx >= terrain.N || ny >= terrain.N)
                 {
                     colony.SetNewRandomDirection();
+                    colony.SkipNextTurn = true;
                     return;
                 }
                 var a = terrain.Cells[nx, ny];
@@ -139,18 +144,19 @@ namespace WinFormsApp1
                 {
                     MergeColonies(colony, a.Colony);
                     colony.SkipNextTurn = true;
-                    a.Colony.SkipNextTurn = true;
                     return;
                 }
                 target.Add(new Point(nx, ny));
             }
-            foreach (var p in colony.members)
-            {
-                terrain.Cells[p.X, p.Y].RemoveFromColony();
-            }
             foreach (var p in target)
             {
                 terrain.Cells[p.X, p.Y].AssignToColony(colony);
+            }
+            var old = colony.members.ToList();
+            foreach (var p in old)
+            {
+                if (!target.Contains(p))
+                    terrain.Cells[p.X, p.Y].RemoveFromColony();
             }
             colony.members.Clear();
             foreach (var p in target) colony.members.Add(p);

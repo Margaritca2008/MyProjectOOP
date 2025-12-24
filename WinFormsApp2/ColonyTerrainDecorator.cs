@@ -14,7 +14,7 @@ namespace WinFormsApp1
         public override void Update()
         {
             inner.Update();
-            colonys.MoveColonies();
+            
         }
         public override void Draw(Graphics g, int cellSize)
         {

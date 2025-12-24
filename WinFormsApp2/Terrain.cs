@@ -12,7 +12,6 @@ namespace WinFormsApp1
         {
             Reinitialize(N, cellFactory);
         }
-
         public void Reinitialize(int N, ICellFactory cellFactory)
         {
             Random rnd = new Random();
@@ -21,7 +20,7 @@ namespace WinFormsApp1
             {
                 for (int y = 0; y < N; y++)
                 {
-                    cells[x, y] = cellFactory.Create(x, y, rnd.Next(8) == 1 ? CellType.White : CellType.Empty);
+                    cells[x, y] = cellFactory.Create(x, y, rnd.Next(6) == 1 ? CellType.White : CellType.Empty);
                 }
             }
             //for (int x = 0; x < N; x++)
@@ -83,7 +82,6 @@ namespace WinFormsApp1
                     if (firstBlack == null) firstBlack = n; 
                 }
             }
-
             return new CellContext(cell.Type, white, black, white + black, firstBlack, cell);
         }
 
@@ -98,7 +96,6 @@ namespace WinFormsApp1
                 {
                     cells[x, y].ApplyNextState();
                 }
-
         }
         public void Draw(Graphics g, int cellSize)
         {

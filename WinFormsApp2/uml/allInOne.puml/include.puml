@@ -4,6 +4,8 @@ class CellContext <<record>> {
     + WhiteN : int <<get>> <<init>>
     + BlackN : int <<get>> <<init>>
     + AliveN : int <<get>> <<init>>
+    + FirstBlackNeighbor : Cell? <<get>> <<init>>
+    + myCell : Cell <<get>> <<init>>
 }
 enum CellType {
     Empty,
@@ -15,27 +17,47 @@ class Cell {
     + Y : int <<get>>
     + Type : CellType <<get>>
     + Neighbors : List<Cell> <<get>> <<set>>
+    + Colony : Colony <<get>> = null
     - _nextType : CellType
     - <<readonly>> provider : ICellStrategyProvider
     + Cell(x:int, y:int, type:CellType, provider:ICellStrategyProvider)
     + PlanNext(ctx:CellContext) : void
+    + AssignType(type:CellType) : void
+    + AssignToColony(colony:Colony) : void
+    + RemoveFromColony() : void
     + ApplyNextState() : void
+    + ClearColony() : void
     + Draw(g:Graphics, cellSize:int) : void
 }
-enum Direction {
-    Left,
-    Right,
-    Up,
-    Down,
-}
 class Colony {
-    + id : int
-    + members : List<(int i, int j)>
-    + dir : Direction
-    + Blocked : bool
-    + Colony(_id:int)
-    + PickNewDirection(prev:Direction) : void
+    + members : HashSet<Point> <<get>>
+    + Direction : Point <<get>> <<set>>
+    - {static} _nextId : int = 1
+    + Id : int <<get>>
+    + SkipNextTurn : bool <<get>> <<set>> = false
+    - rnd : Random
+    + Colony(cells:IEnumerable<Point>)
+    + SetNewRandomDirection() : void
+    - RandomDirection(old:Point) : Point
 }
+class Colonys {
+    - <<readonly>> terrain : Terrain
+    - <<readonly>> colonys : List<Colony>
+    - <<readonly>> rnd : Random
+    + Colonys(terrain:Terrain)
+    + CreateColoniesFromScanner(scanner:Scanner, replace:bool) : void
+    - MergeColonies(a:Colony, b:Colony) : void
+    + MoveColonies() : void
+    - TryMove(colony:Colony) : void
+}
+class ColonyTerrainDecorator {
+    - colonys : Colonys
+    - scanner : Scanner
+    + ColonyTerrainDecorator(inner:ITerrain, sranner:Scanner, colonys:Colonys)
+    + <<override>> Update() : void
+    + <<override>> Draw(g:Graphics, cellSize:int) : void
+}
+TerrainDecorator <|-- ColonyTerrainDecorator
 class Form1 <<partial>> {
     - pictureBox : PictureBox
     - drawGridCheckBox : CheckBox
@@ -52,7 +74,9 @@ class Form1 <<partial>> {
     - statsDecorator : StatisticsTerrainDecorator
     - scannerDecorator : ScannerTerrainDecorator
     - framedDecorator : FramedCellsTerrainDecorator
+    - colonyDecorator : ColonyTerrainDecorator
     - scanner : Scanner
+    - colonys : Colonys
     - currentFactory : IWorldFactory
     - fieldSize : int = 40
     + Form1()
@@ -167,9 +191,11 @@ class StatisticsTerrainDecorator {
 TerrainDecorator <|-- StatisticsTerrainDecorator
 class Terrain {
     - cells : Cell[,]
+    + {static} nextId : int = 0
     + Terrain(N:int, cellFactory:ICellFactory)
     + Reinitialize(N:int, cellFactory:ICellFactory) : void
-    - GetNeighbors(x:int, y:int) : List<Cell>
+    + GetNeighbors(x:int, y:int) : List<Cell>
+    + GetNeighbors(cell:Cell) : IEnumerable<Cell>
     + Cells : Cell[,] <<get>>
     + N : int <<get>>
     + BuildContext(cell:Cell) : CellContext
